@@ -42,6 +42,9 @@ config/dev.secret.exs
 config/prod.secret.exs
 .secret.exs
 
-# === macOS & system files ===
+# macOS & system files 
 .DS_Store
 Thumbs.db
+
+# Miscellaneous
+data_compiler/CLAUDE.md

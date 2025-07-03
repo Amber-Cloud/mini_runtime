@@ -1,21 +1,14 @@
 # DataCompiler
 
-**TODO: Add description**
+Compiles application configuration into a format suitable for DataAPI. Takes JSON input containing app configuration (app_id, endpoints, tables) and stores the compiled result in Redis for later retrieval.
 
-## Installation
+## Prerequisites
+- Redis running on localhost:6379
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `data_compiler` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:data_compiler, "~> 0.1.0"}
-  ]
-end
+## Usage
+```bash
+mix deps.get
+mix compile
+mix test
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/data_compiler>.
 
