@@ -7,6 +7,7 @@ erl_crash.dump
 *.ez
 mini_runtime-*.tar
 /tmp/
+.elixir_ls/*
 
 # Node / React / TypeScript 
 node_modules/
