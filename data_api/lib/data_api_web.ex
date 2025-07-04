@@ -41,7 +41,6 @@ defmodule DataApiWeb do
         formats: [:html, :json],
         layouts: [html: DataApiWeb.Layouts]
 
-
       import Plug.Conn
 
       unquote(verified_routes())
