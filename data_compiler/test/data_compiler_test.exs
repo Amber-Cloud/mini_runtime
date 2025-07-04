@@ -11,8 +11,8 @@ defmodule DataCompilerTest do
 
   # Clean up Redis before each test
   setup %{conn: conn} do
-    Redix.command(conn, ["DEL", "compiled:test_app"])
-    Redix.command(conn, ["DEL", "compiled:blog_app"])
+    Redix.command(conn, ["DEL", "config:test_app"])
+    Redix.command(conn, ["DEL", "config:blog_app"])
     :ok
   end
 
@@ -75,21 +75,24 @@ defmodule DataCompilerTest do
           "method" => "GET",
           "table" => "users",
           "cardinality" => "many",
-          "key" => "GET_users_many"
+          "app_id" => "test_app",
+          "key" => "GET_test_app_users_many"
         },
         %{
           "path" => "/users/:id",
           "method" => "GET",
           "table" => "users",
           "cardinality" => "one",
-          "key" => "GET_users_id_one"
+          "app_id" => "test_app",
+          "key" => "GET_test_app_users_id_one"
         },
         %{
           "path" => "/posts",
           "method" => "POST",
           "table" => "posts",
           "cardinality" => "one",
-          "key" => "POST_posts_one"
+          "app_id" => "test_app",
+          "key" => "POST_test_app_posts_one"
         }
       ],
       "tables" => %{
@@ -179,7 +182,8 @@ defmodule DataCompilerTest do
 
       {:ok, compiled} = DataCompiler.process_input(input)
       [endpoint] = compiled["endpoints"]
-      assert endpoint["key"] == "GET_api_v1_users_id_posts_many"
+      assert endpoint["key"] == "GET_blog_app_api_v1_users_id_posts_many"
+      assert endpoint["app_id"] == "blog_app"
     end
   end
 
@@ -188,7 +192,7 @@ defmodule DataCompilerTest do
       {:ok, compiled} = DataCompiler.process_input(valid_input_map())
 
       # Check data was stored in Redis
-      {:ok, stored_data} = Redix.command(conn, ["GET", "compiled:test_app"])
+      {:ok, stored_data} = Redix.command(conn, ["GET", "config:test_app"])
       assert stored_data != nil
 
       # Verify stored data matches compiled output

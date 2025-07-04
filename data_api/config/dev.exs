@@ -6,6 +6,7 @@ config :data_api, DataApi.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "data_api_dev",
+  port: 5431,
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

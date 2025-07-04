@@ -22,7 +22,7 @@ defmodule DataCompiler.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4"},
-      {:redix, "~> 1.1"}
+      {:redix, "~> 1.2"}
     ]
   end
 end

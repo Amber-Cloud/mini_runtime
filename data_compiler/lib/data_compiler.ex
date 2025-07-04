@@ -18,7 +18,7 @@ defmodule DataCompiler do
   end
 
   defp compile(%{"app_id" => app_id, "endpoints" => endpoints, "tables" => tables}) do
-    with {:ok, processed_endpoints} <- process_endpoints(endpoints),
+    with {:ok, processed_endpoints} <- process_endpoints(endpoints, app_id),
          {:ok, processed_tables} <- process_tables(tables) do
       compiled = %{
         "app_id" => app_id,
@@ -31,20 +31,21 @@ defmodule DataCompiler do
 
   defp compile(_), do: {:error, "Invalid input format"}
 
-  defp process_endpoints([]) do
+  defp process_endpoints([], _app_id) do
     {:error, "No endpoints provided"}
   end
 
-  defp process_endpoints(endpoints) do
+  defp process_endpoints(endpoints, app_id) do
     processed = Enum.map(endpoints, fn endpoint ->
       %{
         "path" => endpoint["path"],
         "method" => endpoint["method"],
         "table" => endpoint["table"],
         "cardinality" => endpoint["cardinality"],
+        "app_id" => app_id,
         # Generate a unique key for this endpoint
         "key" =>
-          "#{endpoint["method"]}_#{endpoint["path"] |> String.trim_leading("/") |> String.replace(":", "") |> String.replace("/", "_")}_#{endpoint["cardinality"]}"
+          "#{endpoint["method"]}_#{app_id}_#{endpoint["path"] |> String.trim_leading("/") |> String.replace(":", "") |> String.replace("/", "_")}_#{endpoint["cardinality"]}"
       }
     end)
     {:ok, processed}
@@ -72,7 +73,7 @@ defmodule DataCompiler do
   defp store_in_redis(compiled) do
     case Redix.start_link() do
       {:ok, conn} ->
-        key = "compiled:#{compiled["app_id"]}"
+        key = "config:#{compiled["app_id"]}"
 
         case Redix.command(conn, ["SET", key, Jason.encode!(compiled)]) do
           {:ok, "OK"} ->

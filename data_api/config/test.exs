@@ -10,6 +10,7 @@ config :data_api, DataApi.Repo,
   password: "postgres",
   hostname: "localhost",
   database: "data_api_test#{System.get_env("MIX_TEST_PARTITION")}",
+  port: 5431,
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 
