@@ -2,6 +2,7 @@ defmodule DataApi.ConfigLoaderTest do
   use ExUnit.Case, async: true
 
   alias DataApi.ConfigLoader
+  alias DataApi.TestFixtures
 
   setup_all do
     {:ok, conn} = Redix.start_link()
@@ -14,88 +15,12 @@ defmodule DataApi.ConfigLoaderTest do
     Redix.command(conn, ["DEL", "config:blog_app"])
 
     # Store test configs in Redis
-    Redix.command(conn, ["SET", "config:test_app", Jason.encode!(app_config_1())])
-    Redix.command(conn, ["SET", "config:blog_app", Jason.encode!(app_config_2())])
+    Redix.command(conn, ["SET", "config:test_app", Jason.encode!(TestFixtures.test_app_config())])
+    Redix.command(conn, ["SET", "config:blog_app", Jason.encode!(TestFixtures.blog_app_config())])
 
     :ok
   end
 
-  # Test data fixtures (copied from DataCompiler tests)
-  defp app_config_1 do
-    %{
-      "app_id" => "test_app",
-      "endpoints" => [
-        %{
-          "path" => "/users",
-          "method" => "GET",
-          "table" => "users",
-          "cardinality" => "many",
-          "app_id" => "test_app",
-          "key" => "GET_test_app_users_many"
-        },
-        %{
-          "path" => "/users/:id",
-          "method" => "GET",
-          "table" => "users",
-          "cardinality" => "one",
-          "app_id" => "test_app",
-          "key" => "GET_test_app_users_id_one"
-        },
-        %{
-          "path" => "/posts",
-          "method" => "POST",
-          "table" => "posts",
-          "cardinality" => "one",
-          "app_id" => "test_app",
-          "key" => "POST_test_app_posts_one"
-        }
-      ],
-      "tables" => %{
-        "users" => %{
-          "name" => "users",
-          "columns" => [
-            %{"name" => "id", "type" => "integer"},
-            %{"name" => "name", "type" => "string"},
-            %{"name" => "email", "type" => "string"}
-          ]
-        },
-        "posts" => %{
-          "name" => "posts",
-          "columns" => [
-            %{"name" => "id", "type" => "integer"},
-            %{"name" => "title", "type" => "string"},
-            %{"name" => "content", "type" => "text"},
-            %{"name" => "user_id", "type" => "integer"}
-          ]
-        }
-      }
-    }
-  end
-
-  defp app_config_2 do
-    %{
-      "app_id" => "blog_app",
-      "endpoints" => [
-        %{
-          "path" => "/articles",
-          "method" => "GET",
-          "table" => "articles",
-          "cardinality" => "many",
-          "app_id" => "blog_app",
-          "key" => "GET_blog_app_articles_many"
-        }
-      ],
-      "tables" => %{
-        "articles" => %{
-          "name" => "articles",
-          "columns" => [
-            %{"name" => "id", "type" => "integer"},
-            %{"name" => "title", "type" => "string"}
-          ]
-        }
-      }
-    }
-  end
 
   describe "load_all_configs/0" do
     test "loads multiple valid configurations" do
@@ -107,8 +32,8 @@ defmodule DataApi.ConfigLoaderTest do
       test_app_config = Enum.find(configs, fn config -> config["app_id"] == "test_app" end)
       blog_app_config = Enum.find(configs, fn config -> config["app_id"] == "blog_app" end)
 
-      assert test_app_config == app_config_1()
-      assert blog_app_config == app_config_2()
+      assert test_app_config == TestFixtures.test_app_config()
+      assert blog_app_config == TestFixtures.blog_app_config()
     end
 
     test "loads single configuration when only one exists", %{conn: conn} do
