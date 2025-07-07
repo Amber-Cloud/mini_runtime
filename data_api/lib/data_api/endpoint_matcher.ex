@@ -14,41 +14,77 @@ defmodule DataApi.EndpointMatcher do
   @doc """
   Finds the endpoint config that matches the given HTTP method and path.
 
+  The path must be in format "/app_id/endpoint_path" where app_id identifies
+  which application's endpoints to search.
+
   ## Examples
-      iex> match_endpoint(configs, "GET", "/users/123")
+      iex> match_endpoint(configs, "GET", "/blog_app/users/123")
       {:ok, {%{"path" => "/users/:id", "method" => "GET", ...}, %{"users" => ...}, %{"id" => "123"}}}
 
-      iex> match_endpoint(configs, "DELETE", "/nonexistent")
-      {:error, :not_found}
+      iex> match_endpoint(configs, "GET", "/unknown_app/users")
+      {:error, :app_not_found}
+
+      iex> match_endpoint(configs, "GET", "/blog_app/nonexistent")
+      {:error, :endpoint_not_found}
   """
   @spec match_endpoint([config()], String.t(), String.t()) ::
-          {:ok, {endpoint_config(), table_config(), path_params()}} | {:error, :not_found}
+          {:ok, {endpoint_config(), table_config(), path_params()}} | {:error, :app_not_found | :endpoint_not_found}
 
   def match_endpoint(configs, method, path) do
     normalized_method = String.upcase(method)
-    all_endpoints = Enum.flat_map(configs, fn config -> config["endpoints"] end)
 
-    find_matching_endpoint(all_endpoints, configs, normalized_method, path)
+    case extract_app_id_and_endpoint_path(path) do
+      {:ok, {app_id, endpoint_path}} ->
+        case find_app_config(configs, app_id) do
+          {:ok, app_config} ->
+            find_matching_endpoint(app_config["endpoints"], app_config, normalized_method, endpoint_path)
+          {:error, :not_found} ->
+            {:error, :app_not_found}
+        end
+      {:error, :invalid_path} ->
+        {:error, :invalid_path}
+    end
+  end
+
+  # Extract app_id and endpoint path from request path like "/blog_app/users/123"
+  defp extract_app_id_and_endpoint_path(path) do
+    segments = path |> String.trim_trailing("/") |> String.split("/", trim: true)
+
+    case segments do
+      [app_id | endpoint_segments] ->
+        endpoint_path = "/" <> Enum.join(endpoint_segments, "/")
+        {:ok, {app_id, endpoint_path}}
+      [] ->
+        {:error, :invalid_path}
+    end
+  end
+
+  # Find a specific app's config by app_id
+  defp find_app_config(configs, app_id) do
+    case Enum.find(configs, fn config -> config["app_id"] == app_id end) do
+      nil -> {:error, :not_found}
+      app_config -> {:ok, app_config}
+    end
   end
 
   # Find the first endpoint that matches method and path
-  defp find_matching_endpoint(endpoints, configs, method, path) do
+  defp find_matching_endpoint(endpoints, app_config, method, path) do
     result = Enum.find_value(endpoints, fn endpoint ->
-      try_match_endpoint(endpoint, configs, method, path)
+      try_match_endpoint(endpoint, app_config, method, path)
     end)
 
     case result do
-      nil -> {:error, :not_found}
+      nil -> {:error, :endpoint_not_found}
       match_data -> {:ok, match_data}
     end
   end
 
   # Try to match a single endpoint against the request
-  defp try_match_endpoint(endpoint, configs, method, path) do
-    if endpoint["method"] == method do
+  defp try_match_endpoint(endpoint, app_config, method, path) do
+    if endpoint["method"] == method and endpoint["app_id"] == app_config["app_id"] do
       case match_path_pattern(endpoint["path"], path) do
         {:ok, path_params} ->
-          build_match_result(endpoint, configs, path_params)
+          build_match_result(endpoint, app_config, path_params)
         {:error, :no_match} ->
           nil
       end
@@ -58,22 +94,22 @@ defmodule DataApi.EndpointMatcher do
   end
 
   # Build the final match result with table config
-  defp build_match_result(endpoint, configs, path_params) do
+  defp build_match_result(endpoint, app_config, path_params) do
     table_name = endpoint["table"]
-    case find_table_config(configs, endpoint["app_id"], table_name) do
-      {:ok, table_config} ->
-        {endpoint, table_config, path_params}
-      {:error, :not_found} ->
+    case app_config["tables"][table_name] do
+      nil ->
         nil
+      table_config ->
+        {endpoint, table_config, path_params}
     end
   end
 
   # Matches a path pattern (like "/users/:id") against an actual path (like "/users/123")
   defp match_path_pattern(pattern, actual_path) do
-    pattern_segments = String.split(pattern, "/", trim: true)
-    actual_segments = String.split(actual_path, "/", trim: true)
+    # Normalize paths by removing trailing slashes and split into segments
+    pattern_segments = pattern |> String.trim_trailing("/") |> String.split("/", trim: true)
+    actual_segments = actual_path |> String.trim_trailing("/") |> String.split("/", trim: true)
 
-    # Paths must have same number of segments to match
     if length(pattern_segments) == length(actual_segments) do
       extract_params(pattern_segments, actual_segments, %{})
     else
@@ -100,18 +136,4 @@ defmodule DataApi.EndpointMatcher do
     end
   end
 
-  # Find table configuration for a specific app and table name
-  defp find_table_config(configs, app_id, table_name) do
-    app_config = Enum.find(configs, fn config -> config["app_id"] == app_id end)
-
-    case app_config do
-      nil ->
-        {:error, :not_found}
-      config ->
-        case config["tables"][table_name] do
-          nil -> {:error, :not_found}
-          table_config -> {:ok, table_config}
-        end
-    end
-  end
 end
