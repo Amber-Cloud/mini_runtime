@@ -28,7 +28,8 @@ defmodule DataApi.EndpointMatcher do
       {:error, :endpoint_not_found}
   """
   @spec match_endpoint([config()], String.t(), String.t()) ::
-          {:ok, {endpoint_config(), table_config(), path_params()}} | {:error, :app_not_found | :endpoint_not_found}
+          {:ok, {endpoint_config(), table_config(), path_params()}}
+          | {:error, :app_not_found | :endpoint_not_found}
 
   def match_endpoint(configs, method, path) do
     normalized_method = String.upcase(method)
@@ -37,10 +38,17 @@ defmodule DataApi.EndpointMatcher do
       {:ok, {app_id, endpoint_path}} ->
         case find_app_config(configs, app_id) do
           {:ok, app_config} ->
-            find_matching_endpoint(app_config["endpoints"], app_config, normalized_method, endpoint_path)
+            find_matching_endpoint(
+              app_config["endpoints"],
+              app_config,
+              normalized_method,
+              endpoint_path
+            )
+
           {:error, :not_found} ->
             {:error, :app_not_found}
         end
+
       {:error, :invalid_path} ->
         {:error, :invalid_path}
     end
@@ -54,6 +62,7 @@ defmodule DataApi.EndpointMatcher do
       [app_id | endpoint_segments] ->
         endpoint_path = "/" <> Enum.join(endpoint_segments, "/")
         {:ok, {app_id, endpoint_path}}
+
       [] ->
         {:error, :invalid_path}
     end
@@ -69,9 +78,10 @@ defmodule DataApi.EndpointMatcher do
 
   # Find the first endpoint that matches method and path
   defp find_matching_endpoint(endpoints, app_config, method, path) do
-    result = Enum.find_value(endpoints, fn endpoint ->
-      try_match_endpoint(endpoint, app_config, method, path)
-    end)
+    result =
+      Enum.find_value(endpoints, fn endpoint ->
+        try_match_endpoint(endpoint, app_config, method, path)
+      end)
 
     case result do
       nil -> {:error, :endpoint_not_found}
@@ -85,6 +95,7 @@ defmodule DataApi.EndpointMatcher do
       case match_path_pattern(endpoint["path"], path) do
         {:ok, path_params} ->
           build_match_result(endpoint, app_config, path_params)
+
         {:error, :no_match} ->
           nil
       end
@@ -96,9 +107,11 @@ defmodule DataApi.EndpointMatcher do
   # Build the final match result with table config
   defp build_match_result(endpoint, app_config, path_params) do
     table_name = endpoint["table"]
+
     case app_config["tables"][table_name] do
       nil ->
         nil
+
       table_config ->
         {endpoint, table_config, path_params}
     end
@@ -135,5 +148,4 @@ defmodule DataApi.EndpointMatcher do
         {:error, :no_match}
     end
   end
-
 end

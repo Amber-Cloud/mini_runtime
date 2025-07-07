@@ -9,7 +9,7 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {endpoint, table_config, path_params}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
 
       assert endpoint["path"] == "/users"
       assert endpoint["method"] == "GET"
@@ -22,7 +22,7 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {endpoint, table_config, path_params}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123")
 
       assert endpoint["path"] == "/users/:id"
       assert endpoint["method"] == "GET"
@@ -34,7 +34,11 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {endpoint, table_config, path_params}} =
-        EndpointMatcher.match_endpoint(configs, "DELETE", "/blog_app/articles/456/comments/789")
+               EndpointMatcher.match_endpoint(
+                 configs,
+                 "DELETE",
+                 "/blog_app/articles/456/comments/789"
+               )
 
       assert endpoint["path"] == "/articles/:article_id/comments/:comment_id"
       assert endpoint["method"] == "DELETE"
@@ -48,13 +52,15 @@ defmodule DataApi.EndpointMatcherTest do
 
       # GET /test_app/users
       assert {:ok, {get_endpoint, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+
       assert get_endpoint["method"] == "GET"
       assert get_endpoint["cardinality"] == "many"
 
       # POST /test_app/users
       assert {:ok, {post_endpoint, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "POST", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "POST", "/test_app/users")
+
       assert post_endpoint["method"] == "POST"
       assert post_endpoint["cardinality"] == "one"
     end
@@ -64,12 +70,14 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Test lowercase
       assert {:ok, {endpoint, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "get", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "get", "/test_app/users")
+
       assert endpoint["method"] == "GET"
 
       # Test mixed case
       assert {:ok, {endpoint, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "Post", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "Post", "/test_app/users")
+
       assert endpoint["method"] == "POST"
     end
   end
@@ -79,21 +87,21 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:error, :app_not_found} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/unknown_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/unknown_app/users")
     end
 
     test "returns error for non-existent path" do
       configs = TestFixtures.all_app_configs()
 
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/nonexistent")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/nonexistent")
     end
 
     test "returns error for wrong HTTP method" do
       configs = TestFixtures.all_app_configs()
 
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(configs, "PUT", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "PUT", "/test_app/users")
     end
 
     test "returns error for wrong number of path segments" do
@@ -101,19 +109,19 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Too many segments for any endpoint
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123/extra")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123/extra")
     end
 
     test "returns error when no configs provided" do
       assert {:error, :app_not_found} =
-        EndpointMatcher.match_endpoint([], "GET", "/test_app/users")
+               EndpointMatcher.match_endpoint([], "GET", "/test_app/users")
     end
 
     test "returns error for invalid path format" do
       configs = TestFixtures.all_app_configs()
 
       assert {:error, :invalid_path} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/")
+               EndpointMatcher.match_endpoint(configs, "GET", "/")
     end
   end
 
@@ -123,9 +131,10 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Trailing slash should be normalized away
       assert {:ok, {endpoint1, _, params1}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+
       assert {:ok, {endpoint2, _, params2}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/")
 
       # Should match the same endpoint
       assert endpoint1["path"] == endpoint2["path"]
@@ -133,9 +142,10 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Same with parameterized paths
       assert {:ok, {_, _, params3}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123")
+
       assert {:ok, {_, _, params4}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123/")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/123/")
 
       assert params3 == params4
       assert params3 == %{"id" => "123"}
@@ -145,7 +155,7 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {_, _, path_params}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/user-123_test")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/user-123_test")
 
       assert path_params == %{"id" => "user-123_test"}
     end
@@ -154,7 +164,7 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {_, _, path_params}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/42")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users/42")
 
       assert path_params == %{"id" => "42"}
     end
@@ -178,7 +188,7 @@ defmodule DataApi.EndpointMatcherTest do
       ]
 
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(broken_configs, "GET", "/broken_app/broken")
+               EndpointMatcher.match_endpoint(broken_configs, "GET", "/broken_app/broken")
     end
 
     test "skips endpoints with missing app configuration" do
@@ -190,7 +200,8 @@ defmodule DataApi.EndpointMatcherTest do
               "path" => "/test",
               "method" => "GET",
               "table" => "test_table",
-              "app_id" => "different_app"  # references different app
+              # references different app
+              "app_id" => "different_app"
             }
           ],
           "tables" => %{
@@ -200,7 +211,7 @@ defmodule DataApi.EndpointMatcherTest do
       ]
 
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(broken_configs, "GET", "/test_app/test")
+               EndpointMatcher.match_endpoint(broken_configs, "GET", "/test_app/test")
     end
   end
 
@@ -209,11 +220,13 @@ defmodule DataApi.EndpointMatcherTest do
       configs = TestFixtures.all_app_configs()
 
       assert {:ok, {endpoint1, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/users")
+
       assert endpoint1["app_id"] == "test_app"
 
       assert {:ok, {endpoint2, _, _}} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/blog_app/articles/123/comments")
+               EndpointMatcher.match_endpoint(configs, "GET", "/blog_app/articles/123/comments")
+
       assert endpoint2["app_id"] == "blog_app"
     end
 
@@ -222,11 +235,11 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Cannot access blog_app endpoints via test_app
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/test_app/articles")
+               EndpointMatcher.match_endpoint(configs, "GET", "/test_app/articles")
 
       # Cannot access test_app endpoints via blog_app
       assert {:error, :endpoint_not_found} =
-        EndpointMatcher.match_endpoint(configs, "GET", "/blog_app/users")
+               EndpointMatcher.match_endpoint(configs, "GET", "/blog_app/users")
     end
 
     test "handles apps with same endpoint paths separately" do
@@ -263,13 +276,15 @@ defmodule DataApi.EndpointMatcherTest do
 
       # Access app1's endpoint
       assert {:ok, {endpoint1, table_config1, _}} =
-        EndpointMatcher.match_endpoint(duplicate_configs, "GET", "/app1/duplicate")
+               EndpointMatcher.match_endpoint(duplicate_configs, "GET", "/app1/duplicate")
+
       assert endpoint1["app_id"] == "app1"
       assert table_config1["name"] == "table1"
 
       # Access app2's endpoint
       assert {:ok, {endpoint2, table_config2, _}} =
-        EndpointMatcher.match_endpoint(duplicate_configs, "GET", "/app2/duplicate")
+               EndpointMatcher.match_endpoint(duplicate_configs, "GET", "/app2/duplicate")
+
       assert endpoint2["app_id"] == "app2"
       assert table_config2["name"] == "table2"
     end

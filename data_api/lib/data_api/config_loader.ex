@@ -3,6 +3,19 @@ defmodule DataApi.ConfigLoader do
   Loads compiled configurations from Redis.
   """
 
+  @doc """
+  Loads all valid application configurations from Redis.
+
+  Connects to Redis, finds all keys matching "config:*", loads and validates each
+  configuration, then returns only the valid ones.
+
+  ## Examples
+      iex> load_all_configs()
+      {:ok, [%{"app_id" => "blog_app", "endpoints" => [...], "tables" => %{...}}]}
+      
+      iex> load_all_configs()
+      {:error, "No valid configurations found"}
+  """
   def load_all_configs do
     case Redix.start_link() do
       {:ok, conn} ->

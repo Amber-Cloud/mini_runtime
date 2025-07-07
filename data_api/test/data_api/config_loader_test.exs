@@ -21,7 +21,6 @@ defmodule DataApi.ConfigLoaderTest do
     :ok
   end
 
-
   describe "load_all_configs/0" do
     test "loads multiple valid configurations" do
       {:ok, configs} = ConfigLoader.load_all_configs()

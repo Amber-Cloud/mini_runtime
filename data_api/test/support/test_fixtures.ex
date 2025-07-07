@@ -113,5 +113,4 @@ defmodule DataApi.TestFixtures do
   def all_app_configs do
     [test_app_config(), blog_app_config()]
   end
-
 end
