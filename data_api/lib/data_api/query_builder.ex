@@ -74,16 +74,15 @@ defmodule DataApi.QueryBuilder do
     if map_size(all_params) == 0 do
       {"", []}
     else
-      conditions =
-        all_params
-        |> Enum.with_index(1)
-        |> Enum.map(fn {{key, _value}, index} ->
-          "#{key} = $#{index}"
-        end)
+      # NB we retrieve the keys and values in the same pipeline to guarantee the order
+      {conditions, values} = all_params
+      |> Enum.with_index(1)
+      |> Enum.map(fn {{key, value}, index} ->
+        {"#{key} = $#{index}", value}
+      end)
+      |> Enum.unzip()
 
-      values = Map.values(all_params)
       where_clause = Enum.join(conditions, " AND ")
-
       {where_clause, values}
     end
   end
