@@ -111,7 +111,7 @@ defmodule DataApi.QueryBuilderTest do
                QueryBuilder.build_query(endpoint, table_config, "test_app", path_params, %{})
 
       assert query == "SELECT id, name FROM users WHERE app_id = $1 AND id = $2 LIMIT 1"
-      assert params == ["test_app", "123"]
+      assert params == ["test_app", 123]
     end
 
     test "builds SELECT query with multiple path parameters" do
@@ -124,8 +124,8 @@ defmodule DataApi.QueryBuilderTest do
       table_config = %{
         "name" => "comments",
         "columns" => [
-          %{"name" => "id", "type" => "integer"},
-          %{"name" => "content", "type" => "text"},
+          %{"name" => "comment_id", "type" => "integer"},
+          %{"name" => "content", "type" => "string"},
           %{"name" => "article_id", "type" => "integer"}
         ]
       }
@@ -145,13 +145,13 @@ defmodule DataApi.QueryBuilderTest do
       # Test that each key's value ends up in the right position (starting from $2)
       cond do
         String.contains?(query, "article_id = $2") ->
-          assert param1 == "456"
-          assert param2 == "789"
+          assert param1 == 456
+          assert param2 == 789
           assert String.contains?(query, "comment_id = $3")
 
         String.contains?(query, "comment_id = $2") ->
-          assert param1 == "789"
-          assert param2 == "456"
+          assert param1 == 789
+          assert param2 == 456
           assert String.contains?(query, "article_id = $3")
 
         true ->
@@ -243,7 +243,7 @@ defmodule DataApi.QueryBuilderTest do
         "name" => "comments",
         "columns" => [
           %{"name" => "id", "type" => "integer"},
-          %{"name" => "content", "type" => "text"},
+          %{"name" => "content", "type" => "string"},
           %{"name" => "article_id", "type" => "integer"},
           %{"name" => "status", "type" => "string"}
         ]
@@ -271,13 +271,13 @@ defmodule DataApi.QueryBuilderTest do
       # Test that each key's value ends up in the right position (starting from $2)
       cond do
         String.contains?(query, "article_id = $2") ->
-          assert param1 == "123"
+          assert param1 == 123
           assert param2 == "approved"
           assert String.contains?(query, "status = $3")
 
         String.contains?(query, "status = $2") ->
           assert param1 == "approved"
-          assert param2 == "123"
+          assert param2 == 123
           assert String.contains?(query, "article_id = $3")
 
         true ->
@@ -315,7 +315,7 @@ defmodule DataApi.QueryBuilderTest do
 
       assert query == "SELECT id, name FROM users WHERE app_id = $1 AND id = $2 LIMIT 1"
       # Path param wins
-      assert params == ["test_app", "123"]
+      assert params == ["test_app", 123]
     end
   end
 
@@ -404,7 +404,7 @@ defmodule DataApi.QueryBuilderTest do
                QueryBuilder.build_query(endpoint, table_config, "test_app", path_params, %{})
 
       assert query == "SELECT id, name, email FROM users WHERE app_id = $1 AND id = $2 LIMIT 1"
-      assert params == ["test_app", "123"]
+      assert params == ["test_app", 123]
     end
 
     test "works with blog app fixtures - GET comments for article" do
@@ -422,7 +422,7 @@ defmodule DataApi.QueryBuilderTest do
                QueryBuilder.build_query(endpoint, table_config, "blog_app", path_params, %{})
 
       assert query == "SELECT id, content, article_id FROM comments WHERE app_id = $1 AND id = $2"
-      assert params == ["blog_app", "456"]
+      assert params == ["blog_app", 456]
     end
 
     test "works with blog app fixtures - GET articles (many)" do
