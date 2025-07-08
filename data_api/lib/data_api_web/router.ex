@@ -10,5 +10,9 @@ defmodule DataApiWeb.Router do
     pipe_through :api
 
     get "/*path", ApiController, :handle_request
+    post "/*path", ApiController, :method_not_allowed
+    put "/*path", ApiController, :method_not_allowed
+    patch "/*path", ApiController, :method_not_allowed
+    delete "/*path", ApiController, :method_not_allowed
   end
 end

@@ -1,5 +1,7 @@
 defmodule DataApi.ConfigLoaderTest do
-  use ExUnit.Case, async: true
+  # async: false because this test uses Redis, which is shared global state
+  # and can interfere with other tests that also use Redis
+  use ExUnit.Case, async: false
 
   alias DataApi.ConfigLoader
   alias DataApi.TestFixtures
@@ -51,6 +53,9 @@ defmodule DataApi.ConfigLoaderTest do
       Redix.command(conn, ["SET", "config:empty_app", "{}"])
 
       {:ok, configs} = ConfigLoader.load_all_configs()
+
+      {:ok, keys} = Redix.command(conn, ["KEYS", "config:*"])
+      IO.inspect(keys, label: "Redis keys")
 
       # Should return only the 2 valid configs
       assert length(configs) == 2

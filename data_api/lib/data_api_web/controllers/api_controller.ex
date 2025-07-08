@@ -63,6 +63,15 @@ defmodule DataApiWeb.ApiController do
     end
   end
 
+  @doc """
+  Handles unsupported HTTP methods with a 405 Method Not Allowed response.
+  """
+  def method_not_allowed(conn, _params) do
+    conn
+    |> put_status(:method_not_allowed)
+    |> json(%{error: "Method not allowed. Only GET requests are supported."})
+  end
+
   defp extract_app_id(path) do
     path
     |> String.trim_leading("/")
