@@ -52,21 +52,53 @@ defmodule DataCompiler do
   end
 
   defp process_tables(tables) when map_size(tables) > 0 do
-    processed = Enum.into(tables, %{}, fn {table_name, table_def} ->
-      {table_name,
-       %{
-         "name" => table_def["name"],
-         "columns" =>
-           Enum.map(table_def["columns"], fn col ->
-             %{
-               "name" => col["name"],
-               "type" => col["type"]
-             }
-           end)
-       }}
-    end)
-    {:ok, processed}
+    case validate_and_process_tables(tables) do
+      {:ok, processed} -> {:ok, processed}
+      {:error, reason} -> {:error, reason}
+    end
   end
+
+  defp validate_and_process_tables(tables) do
+    try do
+      processed = Enum.into(tables, %{}, fn {table_name, table_def} ->
+        case validate_table_columns(table_def["columns"]) do
+          :ok ->
+            {table_name,
+             %{
+               "name" => table_def["name"],
+               "columns" =>
+                 Enum.map(table_def["columns"], fn col ->
+                   %{
+                     "name" => col["name"],
+                     "type" => col["type"]
+                   }
+                 end)
+             }}
+          {:error, reason} ->
+            throw({:validation_error, "Table '#{table_name}': #{reason}"})
+        end
+      end)
+      {:ok, processed}
+    catch
+      {:validation_error, reason} -> {:error, reason}
+    end
+  end
+
+  defp validate_table_columns(columns) when is_list(columns) do
+    valid_types = ["integer", "string"]
+    
+    invalid_columns = Enum.reject(columns, fn col ->
+      col["type"] in valid_types
+    end)
+    
+    case invalid_columns do
+      [] -> :ok
+      [invalid_col | _] -> 
+        {:error, "Invalid column type '#{invalid_col["type"]}' for column '#{invalid_col["name"]}'. Supported types: #{Enum.join(valid_types, ", ")}"}
+    end
+  end
+
+  defp validate_table_columns(_), do: {:error, "Columns must be a list"}
 
   defp process_tables(_), do: {:error, "No tables defined"}
 

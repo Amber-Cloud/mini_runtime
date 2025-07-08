@@ -54,7 +54,7 @@ defmodule DataCompilerTest do
           "columns" => [
             %{"name" => "id", "type" => "integer"},
             %{"name" => "title", "type" => "string"},
-            %{"name" => "content", "type" => "text"},
+            %{"name" => "content", "type" => "string"},
             %{"name" => "user_id", "type" => "integer"}
           ]
         }
@@ -109,7 +109,7 @@ defmodule DataCompilerTest do
           "columns" => [
             %{"name" => "id", "type" => "integer"},
             %{"name" => "title", "type" => "string"},
-            %{"name" => "content", "type" => "text"},
+            %{"name" => "content", "type" => "string"},
             %{"name" => "user_id", "type" => "integer"}
           ]
         }
@@ -240,6 +240,88 @@ defmodule DataCompilerTest do
 
       result = DataCompiler.process_input(input)
       assert {:error, "No tables defined"} = result
+    end
+  end
+
+  describe "column type validation" do
+    test "accepts valid column types (integer and string)" do
+      input = %{
+        "app_id" => "test_app",
+        "endpoints" => [
+          %{
+            "path" => "/users",
+            "method" => "GET",
+            "table" => "users",
+            "cardinality" => "many"
+          }
+        ],
+        "tables" => %{
+          "users" => %{
+            "name" => "users",
+            "columns" => [
+              %{"name" => "id", "type" => "integer"},
+              %{"name" => "name", "type" => "string"}
+            ]
+          }
+        }
+      }
+
+      result = DataCompiler.process_input(input)
+      assert {:ok, _compiled} = result
+    end
+
+    test "rejects invalid column types and includes table name in error" do
+      input = %{
+        "app_id" => "test_app",
+        "endpoints" => [
+          %{
+            "path" => "/products",
+            "method" => "GET",
+            "table" => "products",
+            "cardinality" => "many"
+          }
+        ],
+        "tables" => %{
+          "products" => %{
+            "name" => "products",
+            "columns" => [
+              %{"name" => "id", "type" => "integer"},
+              %{"name" => "price", "type" => "float"}
+            ]
+          }
+        }
+      }
+
+      result = DataCompiler.process_input(input)
+      assert {:error, error_msg} = result
+      assert String.contains?(error_msg, "Table 'products':")
+      assert String.contains?(error_msg, "Invalid column type 'float'")
+      assert String.contains?(error_msg, "column 'price'")
+      assert String.contains?(error_msg, "Supported types: integer, string")
+    end
+
+    test "rejects when columns is not a list" do
+      input = %{
+        "app_id" => "test_app",
+        "endpoints" => [
+          %{
+            "path" => "/test",
+            "method" => "GET",
+            "table" => "test",
+            "cardinality" => "one"
+          }
+        ],
+        "tables" => %{
+          "test" => %{
+            "name" => "test",
+            "columns" => "not_a_list"
+          }
+        }
+      }
+
+      result = DataCompiler.process_input(input)
+      assert {:error, error_msg} = result
+      assert String.contains?(error_msg, "Columns must be a list")
     end
   end
 end
