@@ -12,7 +12,7 @@ defmodule DataApi.ConfigLoader do
   ## Examples
       iex> load_all_configs()
       {:ok, [%{"app_id" => "blog_app", "endpoints" => [...], "tables" => %{...}}]}
-      
+
       iex> load_all_configs()
       {:error, "No valid configurations found"}
   """
