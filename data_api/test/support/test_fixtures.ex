@@ -91,14 +91,14 @@ defmodule DataApi.TestFixtures do
           "columns" => [
             %{"name" => "id", "type" => "integer"},
             %{"name" => "title", "type" => "string"},
-            %{"name" => "content", "type" => "text"}
+            %{"name" => "content", "type" => "string"}
           ]
         },
         "comments" => %{
           "name" => "comments",
           "columns" => [
             %{"name" => "id", "type" => "integer"},
-            %{"name" => "content", "type" => "text"},
+            %{"name" => "content", "type" => "string"},
             %{"name" => "article_id", "type" => "integer"}
           ]
         }

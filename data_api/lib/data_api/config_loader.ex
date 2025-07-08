@@ -84,6 +84,20 @@ defmodule DataApi.ConfigLoader do
       is_list(config["endpoints"]) and
       length(config["endpoints"]) > 0 and
       is_map(config["tables"]) and
-      map_size(config["tables"]) > 0
+      map_size(config["tables"]) > 0 and
+      valid_table_types?(config["tables"])
   end
+
+  defp valid_table_types?(tables) do
+    Enum.all?(tables, fn {_table_name, table_def} ->
+      valid_table_columns?(table_def["columns"])
+    end)
+  end
+
+  defp valid_table_columns?(columns) when is_list(columns) do
+    valid_types = ["integer", "string"]
+    Enum.all?(columns, fn col -> col["type"] in valid_types end)
+  end
+
+  defp valid_table_columns?(_), do: false
 end

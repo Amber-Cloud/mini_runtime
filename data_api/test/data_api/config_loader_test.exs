@@ -75,5 +75,38 @@ defmodule DataApi.ConfigLoaderTest do
 
       assert {:error, "No valid configurations found"} = ConfigLoader.load_all_configs()
     end
+
+    test "rejects configs with invalid column types", %{conn: conn} do
+      invalid_config = %{
+        "app_id" => "invalid_types_app",
+        "endpoints" => [
+          %{
+            "path" => "/products",
+            "method" => "GET",
+            "table" => "products",
+            "cardinality" => "many"
+          }
+        ],
+        "tables" => %{
+          "products" => %{
+            "name" => "products",
+            "columns" => [
+              %{"name" => "id", "type" => "integer"},
+              %{"name" => "price", "type" => "float"},
+              %{"name" => "name", "type" => "string"}
+            ]
+          }
+        }
+      }
+
+      Redix.command(conn, ["SET", "config:invalid_types_app", Jason.encode!(invalid_config)])
+
+      {:ok, configs} = ConfigLoader.load_all_configs()
+
+      # Should only return the 2 valid configs, not the invalid one
+      assert length(configs) == 2
+      app_ids = Enum.map(configs, fn config -> config["app_id"] end)
+      refute "invalid_types_app" in app_ids
+    end
   end
 end
