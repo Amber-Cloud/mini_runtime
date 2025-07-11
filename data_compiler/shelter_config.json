@@ -1,0 +1,36 @@
+{
+  "app_id": "shelter_app",
+  "endpoints": [
+    {
+      "path": "/cats",
+      "method": "GET",
+      "table": "cats",
+      "cardinality": "many"
+    },
+    {
+      "path": "/cats/:id",
+      "method": "GET", 
+      "table": "cats",
+      "cardinality": "one"
+    }
+  ],
+  "tables": {
+    "cats": {
+      "name": "cats",
+      "columns": [
+        {"name": "id", "type": "integer"},
+        {"name": "name", "type": "string"},
+        {"name": "age", "type": "integer"},
+        {"name": "breed", "type": "string"},
+        {"name": "description", "type": "string"},
+        {"name": "color", "type": "string"},
+        {"name": "gender", "type": "string"},
+        {"name": "adoption_status", "type": "string"},
+        {"name": "photos", "type": "string"},
+        {"name": "app_id", "type": "string"},
+        {"name": "inserted_at", "type": "string"},
+        {"name": "updated_at", "type": "string"}
+      ]
+    }
+  }
+}
