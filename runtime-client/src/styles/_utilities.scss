@@ -1,0 +1,36 @@
+// ========================================
+// Display Utilities
+// ========================================
+
+.u-d-flex {
+  display: flex !important;
+}
+
+.u-d-grid {
+  display: grid !important;
+}
+
+.u-d-block {
+  display: block !important;
+}
+
+.u-d-none {
+  display: none !important;
+}
+
+// ========================================
+// Text Utilities
+// ========================================
+
+.u-text-center {
+  text-align: center !important;
+}
+
+// ========================================
+// Spacing Utilities
+// ========================================
+
+.u-py-5 {
+  padding-top: $spacing-5 !important;
+  padding-bottom: $spacing-5 !important;
+}

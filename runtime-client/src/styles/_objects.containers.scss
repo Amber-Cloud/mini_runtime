@@ -1,0 +1,10 @@
+.o-container {
+  width: 100%;
+  max-width: $container-max-width;
+  margin: 0 auto;
+  padding: 0 $spacing-2;
+
+  @include breakpoint($bp-md) {
+    padding: 0;
+  }
+}

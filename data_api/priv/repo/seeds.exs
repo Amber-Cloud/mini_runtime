@@ -144,7 +144,7 @@ Repo.insert_all("cats", [
     gender: "female",
     adoption_status: "available",
     description: "Gentle black beauty who loves quiet moments and gentle pets. Perfect for a calm household.",
-    photos: "[\"https://i.imgur.com/2nfVh8b.jpeg\", \"https://i.imgur.com/EIPGH7w.jpeg\"]",
+    photos: "[\"https://i.imgur.com/CdFVeJU.jpeg\", \"https://i.imgur.com/xDiQIyH.jpeg\"]",
     app_id: "shelter_app",
     inserted_at: DateTime.utc_now() |> DateTime.to_iso8601(),
     updated_at: DateTime.utc_now() |> DateTime.to_iso8601()
