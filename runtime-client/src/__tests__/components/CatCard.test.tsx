@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import CatCard from "./CatCard";
-import type { Cat } from "../services/catApi";
+import CatCard from "../../components/CatCard";
+import type { Cat } from "../../services/catApi";
 
 // Mock cat data for testing
 const mockCat: Cat = {

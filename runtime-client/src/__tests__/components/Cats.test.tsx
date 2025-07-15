@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import Cats from "./Cats";
-import type { Cat } from "../services/catApi";
+import Cats from "../../components/Cats";
+import type { Cat } from "../../services/catApi";
 
-vi.mock("../services/catApi", () => ({
+vi.mock("../../services/catApi", () => ({
   getAllCats: vi.fn(),
   parsePhotos: vi.fn((photosJson: string) => {
     try {
@@ -14,12 +14,12 @@ vi.mock("../services/catApi", () => ({
   }),
 }));
 
-vi.mock("./Spinner", () => ({
+vi.mock("../../components/Spinner", () => ({
   default: ({ loading }: { loading: boolean }) =>
     loading ? <div data-testid="loading-spinner">Loading...</div> : null,
 }));
 
-import { getAllCats } from "../services/catApi";
+import { getAllCats } from "../../services/catApi";
 
 const mockCats: Cat[] = [
   {

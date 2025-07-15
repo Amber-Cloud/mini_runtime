@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { BrowserRouter } from "react-router-dom";
-import Navbar from "./Navbar";
+import Navbar from "../../components/Navbar";
 
 // Helper to render component with router context
 const renderWithRouter = (component: React.ReactElement) => {
