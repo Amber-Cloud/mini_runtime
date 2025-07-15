@@ -24,28 +24,28 @@ body {
 // ========================================
 
 h1 {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
+  font-size: 1.875rem;
+  font-weight: 700;
   color: $gray-800;
   margin: 0;
 }
 
 h2 {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: $gray-800;
   margin: 0;
 }
 
 h3 {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
+  font-size: 1.125rem;
+  font-weight: 600;
   color: $gray-800;
   margin: 0;
 }
 
 p {
-  font-size: $font-size-base;
+  font-size: 1rem;
   color: $gray-600;
   line-height: 1.5;
   margin: 0;

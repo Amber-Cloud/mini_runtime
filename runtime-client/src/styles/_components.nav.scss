@@ -1,0 +1,73 @@
+// ========================================
+// Navigation
+// ========================================
+
+.c-nav {
+  background-color: $peach;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.c-nav__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 5rem;
+}
+
+.c-nav__brand {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  text-decoration: none;
+  color: $white;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.c-nav__logo {
+  height: 2.5rem;
+  width: auto;
+  background-color: $white;
+  padding: 0.5rem;
+  border-radius: 4rem;
+}
+
+.c-nav__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  display: none;
+
+  @include breakpoint($bp-md) {
+    display: block;
+  }
+}
+
+.c-nav__menu {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.c-nav__link {
+  padding: 0.5rem 2rem;
+  border-radius: $border-radius;
+  text-decoration: none;
+  color: $white;
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: $white;
+  }
+
+  &--active {
+    background-color: $white;
+    color: $orange;
+  }
+}

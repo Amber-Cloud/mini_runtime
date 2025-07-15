@@ -1,0 +1,13 @@
+.c-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.c-not-found__icon {
+  color: $red;
+  font-size: 2rem;
+}

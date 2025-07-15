@@ -14,7 +14,7 @@ interface SpinnerProps {
 const Spinner: React.FC<SpinnerProps> = ({ loading }) => {
   return (
     <ClipLoader
-      color="#4338ca"
+      color="#ea580c"
       loading={loading}
       cssOverride={override}
       size={150}

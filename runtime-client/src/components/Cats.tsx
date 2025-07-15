@@ -27,36 +27,32 @@ const Cats: React.FC = () => {
   }, []);
 
   return (
-    <div className="o-container">
-      <div className="c-cat-shelter">
-        <h1 className="c-cat-shelter__header u-text-center">
-          {loading ? "Loading Cats" : "Our Cats"}
-        </h1>
+    <div className="c-cat-shelter">
+      <h1 className="u-text-center">{loading ? "Loading Cats" : "Our Cats"}</h1>
 
-        {loading && <Spinner loading={loading} />}
+      {loading && <Spinner loading={loading} />}
 
-        {error && (
-          <div className="c-error-state u-py-5 u-text-center">
-            <div>{error}</div>
-          </div>
-        )}
+      {error && (
+        <div className="c-error-state u-py-5 u-text-center">
+          <div>{error}</div>
+        </div>
+      )}
 
-        {!loading && !error && (
-          <>
-            {cats.length > 0 ? (
-              <div className="c-cat-shelter__grid">
-                {cats.map((cat) => {
-                  return <CatCard key={cat.id} cat={cat} />;
-                })}
-              </div>
-            ) : (
-              <div className="c-empty-state u-py-5 u-text-center">
-                <p>No cats found.</p>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      {!loading && !error && (
+        <>
+          {cats.length > 0 ? (
+            <div className="c-cat-shelter__grid">
+              {cats.map((cat) => {
+                return <CatCard key={cat.id} cat={cat} />;
+              })}
+            </div>
+          ) : (
+            <div className="c-empty-state u-py-5 u-text-center">
+              <p>No cats found.</p>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

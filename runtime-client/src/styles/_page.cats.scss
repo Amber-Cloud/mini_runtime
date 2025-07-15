@@ -4,16 +4,20 @@
 
 // Cat Shelter Layout
 .c-cat-shelter {
-  padding: $spacing-4;
-}
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
 
-.c-cat-shelter__header {
-  margin-bottom: $spacing-4;
+  @include breakpoint($bp-md) {
+    gap: 2rem;
+  }
 }
 
 .c-cat-shelter__grid {
   display: grid;
-  gap: $spacing-3;
+  gap: 1.5rem;
   grid-template-columns: 1fr;
 
   @include breakpoint($bp-md) {

@@ -1,0 +1,20 @@
+.c-btn {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  margin-top: 1rem;
+  border-radius: $border-radius;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.c-btn-back {
+  background-color: $orange;
+  color: $white;
+
+  &:hover {
+    background-color: darken($orange, 10%);
+    color: $white;
+  }
+}
