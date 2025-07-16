@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Cat } from "../services/catApi";
 import { getAllCats } from "../services/catApi";
-import Spinner from "./Spinner.tsx";
+import Spinner from "./common/Spinner.tsx";
 import CatCard from "./CatCard.tsx";
 
 const Cats: React.FC = () => {

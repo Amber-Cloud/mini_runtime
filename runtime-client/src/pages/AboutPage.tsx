@@ -8,7 +8,7 @@ const AboutPage = () => {
         <p>
           At Alisa's Cat Shelter, we are dedicated to providing loving care and
           finding forever homes for cats in need. Since our founding, we have
-          rescued, rehabilitated, and rehomed hundreds of cats, giving them a
+          rescued, rehabilitated, and rehomed dozens of cats, giving them a
           second chance at happiness.
         </p>
       </div>

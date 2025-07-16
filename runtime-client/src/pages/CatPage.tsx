@@ -3,6 +3,7 @@ import type { LoaderFunctionArgs } from "react-router-dom";
 import { getCatById } from "../services/catApi";
 import type { Cat } from "../services/catApi";
 import Gallery from "../components/Gallery";
+import CatInfo from "../components/CatInfo";
 
 const CatPage = () => {
   const cat = useLoaderData() as Cat;
@@ -11,26 +12,7 @@ const CatPage = () => {
     <div className="c-cat-page">
       <h1>{cat.name}</h1>
       <Gallery photos={cat.photos} catName={cat.name} />
-      <div className="c-cat-details">
-        <p>
-          <strong>Age:</strong> {cat.age} {cat.age === 1 ? "year" : "years"} old
-        </p>
-        <p>
-          <strong>Breed:</strong> {cat.breed}
-        </p>
-        <p>
-          <strong>Color:</strong> {cat.color}
-        </p>
-        <p>
-          <strong>Gender:</strong> {cat.gender}
-        </p>
-        <p>
-          <strong>Status:</strong> {cat.adoption_status}
-        </p>
-        <p>
-          <strong>Description:</strong> {cat.description}
-        </p>
-      </div>
+      <CatInfo cat={cat} />
     </div>
   );
 };

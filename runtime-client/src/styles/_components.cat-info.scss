@@ -1,0 +1,113 @@
+.c-cat-info {
+  background: $white;
+  border-radius: $border-radius;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.c-cat-info__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  padding: 1.5rem;
+
+  @include breakpoint($bp-md) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include breakpoint($bp-lg) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.c-cat-info__item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: $border-radius;
+  background: $gray-100;
+  transition: all 0.2s ease;
+  cursor: default;
+
+  &:hover {
+    background: $light-orange;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.c-cat-info__icon {
+  font-size: 1.5rem;
+  color: $peach;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background: $white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  .c-cat-info__item:hover & {
+    background: $peach;
+    color: $white;
+    transform: scale(1.1);
+  }
+}
+
+.c-cat-info__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.c-cat-info__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: $gray-500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.c-cat-info__value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: $gray-800;
+  text-transform: capitalize;
+}
+
+.c-cat-info__description {
+  background: $light-orange;
+  padding: 1.5rem;
+  border-top: 1px solid $gray-100;
+
+  h3 {
+    color: $orange;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+  }
+
+  p {
+    color: $gray-600;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+.c-cat-info__status {
+  font-weight: 700;
+  text-transform: uppercase;
+  color: $gray-600;
+}
+.c-cat-info__status--available {
+  color: $green;
+}
+.c-cat-info__status--adopted {
+  color: $orange;
+}
+.c-cat-info__status--reserved {
+  color: $yellow;
+}

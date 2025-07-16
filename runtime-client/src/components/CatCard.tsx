@@ -1,7 +1,8 @@
-import { TbGenderMale, TbGenderFemale } from "react-icons/tb";
 import { IoColorFilterOutline } from "react-icons/io5";
 import { parsePhotos } from "../services/catApi";
 import type { Cat } from "../services/catApi";
+import { Link } from "react-router-dom";
+import GenderIcon from "./common/GenderIcon";
 
 type Props = {
   cat: Cat;
@@ -12,39 +13,32 @@ const CatCard: React.FC<Props> = ({ cat }) => {
   const firstPhoto = photos[0] || "/images/placeholder.jpeg";
 
   return (
-    <div key={cat.id} className="c-cat-card">
+    <Link to={`/cats/${cat.id}`} key={cat.id} className="c-cat-card">
       <img src={firstPhoto} alt={cat.name} className="c-cat-card__image" />
       <div className="c-cat-card__content">
-        <h3>{cat.name}</h3>
+        <h3>{cat.name || "Unknown"}</h3>
         <p className="c-cat-card__meta">
           {`${cat.age} ${cat.age === 1 ? "year" : "years"} old `}
-          {cat.gender?.toLowerCase() === "male" ? (
-            <TbGenderMale
-              title="Male"
-              aria-label="Male cat"
-              style={{ verticalAlign: "text-bottom" }}
-            />
-          ) : (
-            <TbGenderFemale
-              title="Female"
-              aria-label="Female cat"
-              style={{ verticalAlign: "text-bottom" }}
-            />
-          )}
+          <GenderIcon
+            gender={cat.gender}
+            title={cat.gender}
+            ariaLabel={`${cat.gender} cat`}
+            style={{ verticalAlign: "text-bottom" }}
+          />
         </p>
         <p className="c-cat-card__meta">
-          {`${cat.breed} • `}
+          {`${cat.breed || "Unknown"} • `}
 
           <IoColorFilterOutline style={{ verticalAlign: "text-bottom" }} />
 
-          {` ${cat.color}`}
+          {` ${cat.color || "Unknown"}`}
         </p>
-        <p>{cat.description}</p>
+        <p>{cat.description || "We don't know much about this cat yet!"}</p>
       </div>
       <span className={`c-status-badge c-status-badge--${cat.adoption_status}`}>
-        {cat.adoption_status}
+        {cat.adoption_status || "unknown"}
       </span>
-    </div>
+    </Link>
   );
 };
 
