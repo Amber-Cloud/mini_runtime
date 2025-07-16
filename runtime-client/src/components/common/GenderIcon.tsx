@@ -2,7 +2,7 @@ import { TbGenderMale, TbGenderFemale, TbQuestionMark } from "react-icons/tb";
 import type { CSSProperties } from "react";
 
 type GenderIconProps = {
-  gender?: string;
+  gender?: string | null;
   title?: string;
   ariaLabel?: string;
   style?: CSSProperties;
