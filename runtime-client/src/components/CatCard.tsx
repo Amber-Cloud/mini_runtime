@@ -20,9 +20,9 @@ const CatCard: React.FC<Props> = ({ cat }) => {
         <p className="c-cat-card__meta">
           {`${cat.age} ${cat.age === 1 ? "year" : "years"} old `}
           <GenderIcon
-            gender={cat.gender}
-            title={cat.gender}
-            ariaLabel={`${cat.gender} cat`}
+            gender={cat.gender || "unknown gender"}
+            title={cat.gender || "unknown gender"}
+            ariaLabel={`${cat.gender || "unknown gender"} cat`}
             style={{ verticalAlign: "text-bottom" }}
           />
         </p>
@@ -35,7 +35,11 @@ const CatCard: React.FC<Props> = ({ cat }) => {
         </p>
         <p>{cat.description || "We don't know much about this cat yet!"}</p>
       </div>
-      <span className={`c-status-badge c-status-badge--${cat.adoption_status}`}>
+      <span
+        className={`c-status-badge c-status-badge--${
+          cat.adoption_status || "unknown"
+        }`}
+      >
         {cat.adoption_status || "unknown"}
       </span>
     </Link>

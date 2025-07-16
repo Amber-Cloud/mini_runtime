@@ -2,13 +2,13 @@ const API_BASE_URL = "/api/shelter_app";
 
 export interface Cat {
   id: number;
-  name: string;
+  name: string | null | undefined | "";
   age: number;
-  breed: string;
-  description: string;
-  color: string;
-  gender: string;
-  adoption_status: "available" | "reserved" | "adopted";
+  breed: string | null | undefined | "";
+  description: string | null | undefined | "";
+  color: string | null | undefined | "";
+  gender: string | null | undefined | "";
+  adoption_status: "available" | "reserved" | "adopted" | null | undefined | "";
   photos: string; // JSON string array
   app_id: string;
   inserted_at: string;

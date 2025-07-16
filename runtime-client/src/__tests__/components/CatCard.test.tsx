@@ -48,6 +48,18 @@ const mockCatWithoutPhotos: Cat = {
   photos: "[]",
 };
 
+const mockCatWithMissingFields: Cat = {
+  ...mockCat,
+  id: 5,
+  name: "", // empty name
+  breed: "", // empty breed
+  color: "", // empty color
+  gender: "", // empty gender
+  adoption_status: "", // empty status
+  description: "", // empty description
+  photos: "[]", // no photos
+};
+
 describe("CatCard", () => {
   it("renders cat information correctly", () => {
     renderWithRouter(<CatCard cat={mockCat} />);
@@ -131,5 +143,32 @@ describe("CatCard", () => {
 
     // Check that breed and color are displayed together
     expect(screen.getByText(/Persian • Orange/)).toBeInTheDocument();
+  });
+
+  it("handles missing/empty fields with default values", () => {
+    renderWithRouter(<CatCard cat={mockCatWithMissingFields} />);
+
+    // Should show "Unknown" for empty name
+    expect(screen.getByText("Unknown")).toBeInTheDocument();
+
+    // Should show "Unknown" for empty breed and color
+    expect(screen.getByText(/Unknown • Unknown/)).toBeInTheDocument();
+
+    // Should show default description
+    expect(
+      screen.getByText("We don't know much about this cat yet!")
+    ).toBeInTheDocument();
+
+    // Should show "unknown" status badge
+    expect(screen.getByText("unknown")).toBeInTheDocument();
+    expect(screen.getByText("unknown")).toHaveClass("c-status-badge--unknown");
+
+    // Should show placeholder image
+    const image = screen.getByAltText("");
+    expect(image).toHaveAttribute("src", "/images/placeholder.jpeg");
+
+    // Should show question mark icon for unknown gender
+    const unknownGenderIcon = screen.getByLabelText("unknown gender cat");
+    expect(unknownGenderIcon).toBeInTheDocument();
   });
 });
