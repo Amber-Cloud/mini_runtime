@@ -27,7 +27,7 @@ const Cats: React.FC = () => {
   }, []);
 
   return (
-    <div className="c-cat-shelter">
+    <div className="c-cat-page">
       <h1 className="u-text-center">{loading ? "Loading Cats" : "Our Cats"}</h1>
 
       {loading && <Spinner loading={loading} />}
@@ -41,7 +41,7 @@ const Cats: React.FC = () => {
       {!loading && !error && (
         <>
           {cats.length > 0 ? (
-            <div className="c-cat-shelter__grid">
+            <div className="c-cat-page__grid">
               {cats.map((cat) => {
                 return <CatCard key={cat.id} cat={cat} />;
               })}

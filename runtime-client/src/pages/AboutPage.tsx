@@ -1,6 +1,6 @@
 const AboutPage = () => {
   return (
-    <div className="c-cat-shelter">
+    <div className="c-cat-page">
       <h1>About Alisa's Cat Shelter</h1>
 
       <div>

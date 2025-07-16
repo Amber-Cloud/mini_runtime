@@ -25,6 +25,25 @@ export async function getAllCats(): Promise<Cat[]> {
   return response.json();
 }
 
+export async function getCatById(id: number): Promise<Cat> {
+  const response = await fetch(`${API_BASE_URL}/cats/${id}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error(`Cat with ID ${id} not found`);
+    }
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (data === null) {
+    throw new Error(`Cat with ID ${id} not found`);
+  }
+
+  return data;
+}
+
 export function parsePhotos(photosJson: string): string[] {
   try {
     return JSON.parse(photosJson);

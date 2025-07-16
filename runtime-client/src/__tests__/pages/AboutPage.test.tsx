@@ -39,6 +39,6 @@ describe("AboutPage", () => {
     render(<AboutPage />);
 
     const container = screen.getByRole("heading", { level: 1 }).closest("div");
-    expect(container).toHaveClass("c-cat-shelter");
+    expect(container).toHaveClass("c-cat-page");
   });
 });

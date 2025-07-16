@@ -3,7 +3,7 @@
 // ========================================
 
 // Cat Shelter Layout
-.c-cat-shelter {
+.c-cat-page {
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -15,7 +15,7 @@
   }
 }
 
-.c-cat-shelter__grid {
+.c-cat-page__grid {
   display: grid;
   gap: 1.5rem;
   grid-template-columns: 1fr;

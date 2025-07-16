@@ -113,7 +113,7 @@ describe("Cats", () => {
     render(<Cats />);
 
     await waitFor(() => {
-      const grid = screen.getByText("Whiskers").closest(".c-cat-shelter__grid");
+      const grid = screen.getByText("Whiskers").closest(".c-cat-page__grid");
       expect(grid).toBeInTheDocument();
     });
   });
@@ -123,9 +123,7 @@ describe("Cats", () => {
 
     render(<Cats />);
 
-    const container = screen
-      .getByText("Loading Cats")
-      .closest(".c-cat-shelter");
+    const container = screen.getByText("Loading Cats").closest(".c-cat-page");
     expect(container).toBeInTheDocument();
   });
 
