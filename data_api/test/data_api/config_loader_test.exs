@@ -7,7 +7,8 @@ defmodule DataApi.ConfigLoaderTest do
   alias DataApi.TestFixtures
 
   setup_all do
-    {:ok, conn} = Redix.start_link()
+    # Use Redis database 1 for tests to avoid conflicts with development data
+    {:ok, conn} = Redix.start_link(database: 1)
     on_exit(fn -> Redix.stop(conn) end)
     %{conn: conn}
   end

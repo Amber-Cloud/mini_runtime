@@ -4,7 +4,7 @@ defmodule DataCompilerTest do
 
   # Start a redis connection for testing
   setup_all do
-    {:ok, conn} = Redix.start_link()
+    {:ok, conn} = Redix.start_link(database: 1)
     on_exit(fn -> Redix.stop(conn) end)
     %{conn: conn}
   end

@@ -7,7 +7,7 @@ defmodule DataApiWeb.ApiControllerTest do
   alias DataApi.TestFixtures
 
   setup_all do
-    {:ok, conn} = Redix.start_link()
+    {:ok, conn} = Redix.start_link(database: 1)
     on_exit(fn -> Redix.stop(conn) end)
     %{redis_conn: conn}
   end
@@ -55,7 +55,7 @@ defmodule DataApiWeb.ApiControllerTest do
     :ok
   end
 
-  describe "GET requests - successful scenarios" do
+  describe "api_controller GET requests - successful scenarios" do
     test "GET /app_id/users returns all users for app", %{conn: conn} do
       conn = get(conn, "/test_app/users")
 
@@ -71,10 +71,8 @@ defmodule DataApiWeb.ApiControllerTest do
     test "GET /app_id/users/:id returns specific user", %{conn: conn} do
       conn = get(conn, "/test_app/users/1")
 
-      results = json_response(conn, 200)
-      assert length(results) == 1
-
-      [user] = results
+      user = json_response(conn, 200)
+      assert is_map(user)
       assert user["id"] == 1
       assert user["name"] == "John Doe"
       assert user["email"] == "john@test.com"
@@ -91,15 +89,16 @@ defmodule DataApiWeb.ApiControllerTest do
     end
 
 
-    test "GET returns empty array when no results found", %{conn: conn} do
+    test "GET returns null when no results found for single resource", %{conn: conn} do
       conn = get(conn, "/test_app/users/999")
 
-      results = json_response(conn, 200)
-      assert results == []
+      result = json_response(conn, 200)
+      # Should return null for cardinality: "one" when not found
+      assert result == nil
     end
   end
 
-  describe "GET requests - error scenarios" do
+  describe "api_controller GET requests - error scenarios" do
     test "GET /unknown_app/users returns 404", %{conn: conn} do
       conn = get(conn, "/unknown_app/users")
 
@@ -126,7 +125,7 @@ defmodule DataApiWeb.ApiControllerTest do
     end
   end
 
-  describe "GET requests - data isolation" do
+  describe "api_controller GET requests - data isolation" do
     test "apps only see their own data", %{conn: conn} do
       # Add user with same name in different app
       Repo.insert_all("users", [
@@ -150,7 +149,7 @@ defmodule DataApiWeb.ApiControllerTest do
     end
   end
 
-  describe "GET requests - Redis configuration issues" do
+  describe "api_controller GET requests - Redis configuration issues" do
     test "handles no valid configurations", %{conn: conn, redis_conn: redis_conn} do
       # Clear all configs
       Redix.command(redis_conn, ["DEL", "config:test_app"])
@@ -163,7 +162,7 @@ defmodule DataApiWeb.ApiControllerTest do
     end
   end
 
-  describe "unsupported HTTP methods" do
+  describe "api_controller - unsupported HTTP methods" do
     test "POST returns 405 method not allowed", %{conn: conn} do
       conn = post(conn, "/test_app/users", %{})
 
@@ -183,7 +182,7 @@ defmodule DataApiWeb.ApiControllerTest do
     end
   end
 
-  describe "content type handling" do
+  describe "api_controller - content type handling" do
     test "returns JSON content type", %{conn: conn} do
       conn = get(conn, "/test_app/users")
 

@@ -103,7 +103,12 @@ defmodule DataCompiler do
   defp process_tables(_), do: {:error, "No tables defined"}
 
   defp store_in_redis(compiled) do
-    case Redix.start_link() do
+    redis_opts = case Mix.env() do
+      :test -> [database: 1]
+      _ -> []
+    end
+
+    case Redix.start_link(redis_opts) do
       {:ok, conn} ->
         key = "config:#{compiled["app_id"]}"
 

@@ -57,7 +57,9 @@ defmodule DataApiWeb.ApiController do
              query_params
            ),
          {:ok, results} <- DatabaseExecutor.execute_query(sql, params) do
-      {:ok, results}
+      # Return single object for cardinality: "one", array for cardinality: "many"
+      final_results = format_results_by_cardinality(endpoint, results)
+      {:ok, final_results}
     else
       {:error, reason} -> {:error, reason}
     end
@@ -77,5 +79,20 @@ defmodule DataApiWeb.ApiController do
     |> String.trim_leading("/")
     |> String.split("/", parts: 2)
     |> hd()
+  end
+
+  # Format results based on endpoint cardinality
+  defp format_results_by_cardinality(endpoint, results) do
+    case endpoint["cardinality"] do
+      "one" ->
+        case results do
+          [single_result] -> single_result
+          [] -> nil
+          _ -> List.first(results)
+        end
+
+      _ ->
+        results
+    end
   end
 end

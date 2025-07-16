@@ -17,7 +17,12 @@ defmodule DataApi.ConfigLoader do
       {:error, "No valid configurations found"}
   """
   def load_all_configs do
-    case Redix.start_link() do
+    redis_opts = case Mix.env() do
+      :test -> [database: 1]
+      _ -> []
+    end
+
+    case Redix.start_link(redis_opts) do
       {:ok, conn} ->
         case Redix.command(conn, ["KEYS", "config:*"]) do
           {:ok, keys} ->
