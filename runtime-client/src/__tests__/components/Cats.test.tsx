@@ -1,5 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { BrowserRouter } from "react-router-dom";
 import Cats from "../../components/Cats";
 import type { Cat } from "../../services/catApi";
 
@@ -14,12 +15,17 @@ vi.mock("../../services/catApi", () => ({
   }),
 }));
 
-vi.mock("../../components/Spinner", () => ({
+vi.mock("../../components/common/Spinner", () => ({
   default: ({ loading }: { loading: boolean }) =>
     loading ? <div data-testid="loading-spinner">Loading...</div> : null,
 }));
 
 import { getAllCats } from "../../services/catApi";
+
+// Helper function to render with Router
+const renderWithRouter = (component: React.ReactElement) => {
+  return render(<BrowserRouter>{component}</BrowserRouter>);
+};
 
 const mockCats: Cat[] = [
   {
@@ -61,7 +67,7 @@ describe("Cats", () => {
     // Mock a pending promise
     vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     expect(screen.getByText("Loading Cats")).toBeInTheDocument();
     expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
@@ -70,7 +76,7 @@ describe("Cats", () => {
   it("displays cats after successful fetch", async () => {
     vi.mocked(getAllCats).mockResolvedValue(mockCats);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       expect(screen.getByText("Our Cats")).toBeInTheDocument();
@@ -83,7 +89,7 @@ describe("Cats", () => {
   it("displays error message when fetch fails", async () => {
     vi.mocked(getAllCats).mockRejectedValue(new Error("API Error"));
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       expect(
@@ -98,7 +104,7 @@ describe("Cats", () => {
   it("displays empty state when no cats are returned", async () => {
     vi.mocked(getAllCats).mockResolvedValue([]);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       expect(screen.getByText("Our Cats")).toBeInTheDocument();
@@ -110,7 +116,7 @@ describe("Cats", () => {
   it("renders cats in a grid layout", async () => {
     vi.mocked(getAllCats).mockResolvedValue(mockCats);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       const grid = screen.getByText("Whiskers").closest(".c-cat-page__grid");
@@ -121,7 +127,7 @@ describe("Cats", () => {
   it("has correct main container class", () => {
     vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     const container = screen.getByText("Loading Cats").closest(".c-cat-page");
     expect(container).toBeInTheDocument();
@@ -130,7 +136,7 @@ describe("Cats", () => {
   it("calls getAllCats on component mount", () => {
     vi.mocked(getAllCats).mockResolvedValue([]);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     expect(getAllCats).toHaveBeenCalledTimes(1);
   });
@@ -138,7 +144,7 @@ describe("Cats", () => {
   it("handles loading state transition correctly", async () => {
     vi.mocked(getAllCats).mockResolvedValue(mockCats);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     // Initially shows loading
     expect(screen.getByText("Loading Cats")).toBeInTheDocument();
@@ -153,7 +159,7 @@ describe("Cats", () => {
   it("error state has correct styling classes", async () => {
     vi.mocked(getAllCats).mockRejectedValue(new Error("API Error"));
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       const errorDiv = screen
@@ -167,7 +173,7 @@ describe("Cats", () => {
   it("empty state has correct styling classes", async () => {
     vi.mocked(getAllCats).mockResolvedValue([]);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       const emptyDiv = screen
@@ -181,7 +187,7 @@ describe("Cats", () => {
   it("heading has correct text alignment class", () => {
     vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     const heading = screen.getByText("Loading Cats");
     expect(heading).toHaveClass("u-text-center");
@@ -190,7 +196,7 @@ describe("Cats", () => {
   it("renders correct number of cat cards", async () => {
     vi.mocked(getAllCats).mockResolvedValue(mockCats);
 
-    render(<Cats />);
+    renderWithRouter(<Cats />);
 
     await waitFor(() => {
       expect(screen.getByText("Whiskers")).toBeInTheDocument();

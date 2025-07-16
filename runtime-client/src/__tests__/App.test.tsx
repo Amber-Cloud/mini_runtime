@@ -1,6 +1,18 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import App from "../App";
+
+// Mock ScrollToTop to avoid window.scrollTo issues in tests
+// ignore scroll behavior in tests
+vi.mock("../components/common/ScrollToTop", () => ({
+  default: () => null,
+}));
+
+// Mock window.scrollTo for jsdom
+Object.defineProperty(window, "scrollTo", {
+  value: vi.fn(),
+  writable: true,
+});
 
 describe("App", () => {
   it("renders without crashing", async () => {
