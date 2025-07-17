@@ -1,18 +1,49 @@
 # DataApi
 
-To start your Phoenix server:
+Dynamic API system that serves database content based on Redis-stored configurations.
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Overview
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+DataApi is a Phoenix application that dynamically generates API endpoints based on configurations stored in Redis. It supports multiple applications with different database schemas and endpoint configurations.
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Architecture
 
-## Learn more
+- **ConfigLoader**: Loads compiled application configurations from Redis
+- **EndpointMatcher**: Matches incoming HTTP requests to configured endpoints
+- **QueryBuilder**: Builds SQL queries based on endpoint configuration and request parameters
+- **DatabaseExecutor**: Executes queries and returns formatted JSON responses
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+## API Usage
+
+The API accepts requests in the format: `/app_id/endpoint_path`
+
+Examples:
+
+- `GET /shelter_app/cats` - Returns all cats from the shelter application
+- `GET /blog_app/articles` - Returns all articles from the blog application
+
+## Local Development
+
+```bash
+# Install dependencies
+mix deps.get
+
+# Set up database
+mix ecto.setup
+
+# Seed database (optional)
+mix run priv/repo/seeds.exs
+
+# Start server
+mix phx.server
+```
+
+The API will be available at `http://localhost:4000`
+
+## Configuration
+
+Application configurations are compiled by the DataCompiler service and stored in Redis. The DataApi reads these configurations to determine available endpoints and database schemas.
+
+## Testing
+
+mix test

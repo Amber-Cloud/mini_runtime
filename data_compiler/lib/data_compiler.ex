@@ -3,6 +3,31 @@ defmodule DataCompiler do
   Compiles application configuration into a format suitable for DataAPI.
   """
 
+  @doc """
+  Processes application configuration input and stores it in Redis.
+
+  Takes either a JSON string or a map containing application configuration
+  with endpoints and table definitions. Compiles the configuration into
+  a standardized format and stores it in Redis for DataAPI to consume.
+
+  ## Parameters
+  - `input` - Either a JSON string or a map with keys:
+    - `app_id` - Application identifier
+    - `endpoints` - List of endpoint configurations
+    - `tables` - Map of table definitions with column schemas
+
+  ## Returns
+  - `{:ok, compiled_config}` - Successfully compiled and stored
+  - `{:error, reason}` - Compilation or storage failed
+
+  ## Examples
+      iex> json = ~s({"app_id": "my_app", "endpoints": [...], "tables": {...}})
+      iex> DataCompiler.process_input(json)
+      {:ok, %{"app_id" => "my_app", ...}}
+
+      iex> DataCompiler.process_input(%{"invalid" => "config"})
+      {:error, "Invalid input format"}
+  """
   def process_input(input) when is_binary(input) do
     case Jason.decode(input) do
       {:ok, parsed} -> process_input(parsed)
