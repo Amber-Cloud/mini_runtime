@@ -21,8 +21,6 @@ services:
     container_name: shelter_redis
     ports:
       - "6379:6379"
-    volumes:
-      - redisdata:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -32,37 +30,28 @@ services:
   data_compiler:
     build:
       context: ./data_compiler
-      dockerfile: Dockerfile
     container_name: shelter_compiler
-    environment:
-      - MIX_ENV=dev
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
     depends_on:
       redis:
         condition: service_healthy
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     volumes:
       - ./data_compiler:/app
       - /app/deps
       - /app/_build
-    # This is a utility service that compiles config when needed
-    # It doesn't run continuously like a web server
-    command: tail -f /dev/null
+    command: >
+      sh -c "
+        mix deps.get &&
+        mix run compile_config.exs &&
+        tail -f /dev/null
+      "
 
-  data_api:
+  backend:
     build:
       context: ./data_api
-      dockerfile: Dockerfile
     container_name: shelter_backend
-    environment:
-      - MIX_ENV=dev
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/data_api_dev
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - PHX_HOST=0.0.0.0
-      - PHX_PORT=4000
-    ports:
-      - "4000:4000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -70,40 +59,41 @@ services:
         condition: service_healthy
       data_compiler:
         condition: service_started
+    environment:
+      - MIX_ENV=dev
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    ports:
+      - "4000:4000"
     volumes:
       - ./data_api:/app
       - /app/deps
       - /app/_build
+    command: >
+      sh -c "
+        mix deps.get &&
+        mix ecto.create &&
+        mix ecto.migrate &&
+        mix run priv/repo/seeds.exs &&
+        mix phx.server
+      "
 
   frontend:
     build:
       context: ./runtime-client
       dockerfile: Dockerfile.dev
     container_name: shelter_frontend
-    ports:
-      - "5173:5173"
     depends_on:
-      - data_api
+      - backend
+    ports:
+      - "3000:3000"
     volumes:
       - ./runtime-client:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:4000
-
-  frontend_prod:
-    build:
-      context: ./runtime-client
-      dockerfile: Dockerfile
-    container_name: shelter_frontend_prod
-    ports:
-      - "3000:3000"
-    depends_on:
-      - data_api
-    environment:
-      - VITE_API_URL=http://localhost:4000
-    profiles:
-      - production
+      - VITE_API_URL=http://backend:4000
 
 volumes:
   pgdata:
-  redisdata:

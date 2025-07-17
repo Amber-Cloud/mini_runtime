@@ -37,6 +37,8 @@ defmodule DataApi.QueryBuilder do
     select_clause = "SELECT #{columns} FROM #{table_name}"
 
     case build_where_clause(table_config, app_id, path_params, query_params) do
+      {:error, reason} ->
+        {:error, reason}
       {where_clause, params} ->
         # WHERE clause is always present because we always filter by app_id
         query = "#{select_clause} WHERE #{where_clause}"
@@ -49,9 +51,6 @@ defmodule DataApi.QueryBuilder do
           end
 
         {:ok, {final_query, params}}
-
-      {:error, reason} ->
-        {:error, reason}
     end
   end
 

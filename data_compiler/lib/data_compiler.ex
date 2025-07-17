@@ -58,6 +58,8 @@ defmodule DataCompiler do
     end
   end
 
+  defp process_tables(_), do: {:error, "No tables defined"}
+
   defp validate_and_process_tables(tables) do
     try do
       processed = Enum.into(tables, %{}, fn {table_name, table_def} ->
@@ -86,26 +88,29 @@ defmodule DataCompiler do
 
   defp validate_table_columns(columns) when is_list(columns) do
     valid_types = ["integer", "string"]
-    
+
     invalid_columns = Enum.reject(columns, fn col ->
       col["type"] in valid_types
     end)
-    
+
     case invalid_columns do
       [] -> :ok
-      [invalid_col | _] -> 
+      [invalid_col | _] ->
         {:error, "Invalid column type '#{invalid_col["type"]}' for column '#{invalid_col["name"]}'. Supported types: #{Enum.join(valid_types, ", ")}"}
     end
   end
 
   defp validate_table_columns(_), do: {:error, "Columns must be a list"}
 
-  defp process_tables(_), do: {:error, "No tables defined"}
+
 
   defp store_in_redis(compiled) do
+    redis_host = System.get_env("REDIS_HOST") || "localhost"
+    redis_port = String.to_integer(System.get_env("REDIS_PORT") || "6379")
+
     redis_opts = case Mix.env() do
-      :test -> [database: 1]
-      _ -> []
+      :test -> [database: 1, host: redis_host, port: redis_port]
+      _ -> [host: redis_host, port: redis_port]
     end
 
     case Redix.start_link(redis_opts) do

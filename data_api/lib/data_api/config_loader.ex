@@ -17,9 +17,13 @@ defmodule DataApi.ConfigLoader do
       {:error, "No valid configurations found"}
   """
   def load_all_configs do
+
+    redis_host = System.get_env("REDIS_HOST") || "localhost"
+    redis_port = String.to_integer(System.get_env("REDIS_PORT") || "6379")
+
     redis_opts = case Mix.env() do
-      :test -> [database: 1]
-      _ -> []
+      :test -> [database: 1, host: redis_host, port: redis_port]
+      _ -> [host: redis_host, port: redis_port]
     end
 
     case Redix.start_link(redis_opts) do
