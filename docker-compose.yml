@@ -1,24 +1,108 @@
-version: "3.8"
-
 services:
   postgres:
     image: postgres:16
-    container_name: my_postgres
+    container_name: shelter_postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: data_api_dev
     ports:
       - "5431:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:7
-    container_name: my_redis
+    container_name: shelter_redis
     ports:
       - "6379:6379"
     volumes:
       - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  data_compiler:
+    build:
+      context: ./data_compiler
+      dockerfile: Dockerfile
+    container_name: shelter_compiler
+    environment:
+      - MIX_ENV=dev
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./data_compiler:/app
+      - /app/deps
+      - /app/_build
+    # This is a utility service that compiles config when needed
+    # It doesn't run continuously like a web server
+    command: tail -f /dev/null
+
+  data_api:
+    build:
+      context: ./data_api
+      dockerfile: Dockerfile
+    container_name: shelter_backend
+    environment:
+      - MIX_ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/data_api_dev
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - PHX_HOST=0.0.0.0
+      - PHX_PORT=4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      data_compiler:
+        condition: service_started
+    volumes:
+      - ./data_api:/app
+      - /app/deps
+      - /app/_build
+
+  frontend:
+    build:
+      context: ./runtime-client
+      dockerfile: Dockerfile.dev
+    container_name: shelter_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - data_api
+    volumes:
+      - ./runtime-client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:4000
+
+  frontend_prod:
+    build:
+      context: ./runtime-client
+      dockerfile: Dockerfile
+    container_name: shelter_frontend_prod
+    ports:
+      - "3000:3000"
+    depends_on:
+      - data_api
+    environment:
+      - VITE_API_URL=http://localhost:4000
+    profiles:
+      - production
 
 volumes:
   pgdata:

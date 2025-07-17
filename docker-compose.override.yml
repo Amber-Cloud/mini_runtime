@@ -1,0 +1,33 @@
+# Development overrides
+services:
+  data_compiler:
+    command: >
+      sh -c "
+        mix deps.get &&
+        echo 'Compiling shelter configuration...' &&
+        mix run -e '
+          json = File.read!(\"shelter_config.json\")
+          DataCompiler.process_input(json)
+          IO.puts(\"✅ Shelter configuration compiled and stored in Redis\")
+        ' &&
+        tail -f /dev/null
+      "
+
+  data_api:
+    environment:
+      - MIX_ENV=dev
+      - PHX_HOST=0.0.0.0
+      - PHX_PORT=4000
+    command: >
+      sh -c "
+        mix deps.get &&
+        mix ecto.create &&
+        mix ecto.migrate &&
+        mix run priv/repo/seeds.exs &&
+        mix phx.server
+      "
+
+  frontend:
+    environment:
+      - VITE_API_URL=http://localhost:4000
+      - NODE_ENV=development

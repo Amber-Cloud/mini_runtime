@@ -1,0 +1,43 @@
+# Elixir build artifacts
+_build/
+deps/
+*.ez
+
+# Test artifacts
+cover/
+doc/
+
+# Environment files
+.env
+.env.local
+.env.dev
+.env.test
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Log files
+*.log
+erl_crash.dump
+
+# Runtime files
+*.beam
+*.plt
+*.plt.old
+
+# Git
+.git/
+.gitignore
+README.md

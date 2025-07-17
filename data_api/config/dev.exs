@@ -4,9 +4,9 @@ import Config
 config :data_api, DataApi.Repo,
   username: "postgres",
   password: "postgres",
-  hostname: "localhost",
+  hostname: System.get_env("DB_HOST") || "localhost",
   database: "data_api_dev",
-  port: 5431,
+  port: String.to_integer(System.get_env("DB_PORT") || "5431"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -18,9 +18,8 @@ config :data_api, DataApi.Repo,
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
 config :data_api, DataApiWeb.Endpoint,
-  # Binding to loopback ipv4 address prevents access from other machines.
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  # Binding to 0.0.0.0 allows access from Docker containers
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
