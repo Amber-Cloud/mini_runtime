@@ -17,7 +17,7 @@ const Cats: React.FC = () => {
         setError(null);
       } catch (error) {
         console.log("Error fetching cats:", error);
-        setError("Failed to load cats. Please try again.");
+        setError("Failed to load cats. Try to refresh in 30 seconds.");
       } finally {
         setLoading(false);
       }

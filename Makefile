@@ -22,11 +22,6 @@ logs: ## View logs from all services
 clean: ## Remove containers and volumes
 	docker-compose down -v
 
-test: ## Run tests for all services
-	docker-compose run --rm backend mix test
-	docker-compose run --rm data_compiler mix test
-	docker-compose run --rm frontend npm run test:run
-
 seed: ## Re-seed database manually
 	docker-compose exec backend mix run priv/repo/seeds.exs
 

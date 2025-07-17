@@ -93,7 +93,7 @@ describe("Cats", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("Failed to load cats. Please try again.")
+        screen.getByText("Failed to load cats. Try to refresh in 30 seconds.")
       ).toBeInTheDocument();
     });
 
@@ -163,7 +163,7 @@ describe("Cats", () => {
 
     await waitFor(() => {
       const errorDiv = screen
-        .getByText("Failed to load cats. Please try again.")
+        .getByText("Failed to load cats. Try to refresh in 30 seconds.")
         .closest(".c-error-state");
       expect(errorDiv).toBeInTheDocument();
       expect(errorDiv).toHaveClass("u-py-5", "u-text-center");

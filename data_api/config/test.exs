@@ -8,9 +8,9 @@ import Config
 config :data_api, DataApi.Repo,
   username: "postgres",
   password: "postgres",
-  hostname: "localhost",
+  hostname: System.get_env("DB_HOST") || "localhost",
   database: "data_api_test#{System.get_env("MIX_TEST_PARTITION")}",
-  port: 5431,
+  port: String.to_integer(System.get_env("DB_PORT") || "5431"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 

@@ -25,7 +25,7 @@ defmodule DataApiWeb.ApiController do
       {:error, :app_not_found} ->
         conn
         |> put_status(:not_found)
-        |> json(%{error: "Application not found"})
+        |> json(%{error: "Application not found in DB"})
 
       {:error, :endpoint_not_found} ->
         conn

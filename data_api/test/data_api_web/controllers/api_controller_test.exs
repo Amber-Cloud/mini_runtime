@@ -102,7 +102,7 @@ defmodule DataApiWeb.ApiControllerTest do
     test "GET /unknown_app/users returns 404", %{conn: conn} do
       conn = get(conn, "/unknown_app/users")
 
-      assert json_response(conn, 404) == %{"error" => "Application not found"}
+      assert json_response(conn, 404) == %{"error" => "Application not found in DB"}
     end
 
     test "GET /app_id/unknown_endpoint returns 404", %{conn: conn} do
