@@ -5,7 +5,7 @@ import Cats from "../../components/Cats";
 import type { Cat } from "../../services/catApi";
 
 vi.mock("../../services/catApi", () => ({
-  getAllCats: vi.fn(),
+  getFilteredCats: vi.fn(),
   parsePhotos: vi.fn((photosJson: string) => {
     try {
       return JSON.parse(photosJson);
@@ -20,7 +20,7 @@ vi.mock("../../components/common/Spinner", () => ({
     loading ? <div data-testid="loading-spinner">Loading...</div> : null,
 }));
 
-import { getAllCats } from "../../services/catApi";
+import { getFilteredCats } from "../../services/catApi";
 
 // Helper function to render with Router
 const renderWithRouter = (component: React.ReactElement) => {
@@ -65,7 +65,7 @@ describe("Cats", () => {
 
   it("shows loading state initially", () => {
     // Mock a pending promise
-    vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
+    vi.mocked(getFilteredCats).mockImplementation(() => new Promise(() => {}));
 
     renderWithRouter(<Cats />);
 
@@ -74,7 +74,7 @@ describe("Cats", () => {
   });
 
   it("displays cats after successful fetch", async () => {
-    vi.mocked(getAllCats).mockResolvedValue(mockCats);
+    vi.mocked(getFilteredCats).mockResolvedValue(mockCats);
 
     renderWithRouter(<Cats />);
 
@@ -87,7 +87,7 @@ describe("Cats", () => {
   });
 
   it("displays error message when fetch fails", async () => {
-    vi.mocked(getAllCats).mockRejectedValue(new Error("API Error"));
+    vi.mocked(getFilteredCats).mockRejectedValue(new Error("API Error"));
 
     renderWithRouter(<Cats />);
 
@@ -102,7 +102,7 @@ describe("Cats", () => {
   });
 
   it("displays empty state when no cats are returned", async () => {
-    vi.mocked(getAllCats).mockResolvedValue([]);
+    vi.mocked(getFilteredCats).mockResolvedValue([]);
 
     renderWithRouter(<Cats />);
 
@@ -114,7 +114,7 @@ describe("Cats", () => {
   });
 
   it("renders cats in a grid layout", async () => {
-    vi.mocked(getAllCats).mockResolvedValue(mockCats);
+    vi.mocked(getFilteredCats).mockResolvedValue(mockCats);
 
     renderWithRouter(<Cats />);
 
@@ -125,7 +125,7 @@ describe("Cats", () => {
   });
 
   it("has correct main container class", () => {
-    vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
+    vi.mocked(getFilteredCats).mockImplementation(() => new Promise(() => {}));
 
     renderWithRouter(<Cats />);
 
@@ -133,16 +133,17 @@ describe("Cats", () => {
     expect(container).toBeInTheDocument();
   });
 
-  it("calls getAllCats on component mount", () => {
-    vi.mocked(getAllCats).mockResolvedValue([]);
+  it("calls getFilteredCats on component mount", () => {
+    vi.mocked(getFilteredCats).mockResolvedValue([]);
 
     renderWithRouter(<Cats />);
 
-    expect(getAllCats).toHaveBeenCalledTimes(1);
+    expect(getFilteredCats).toHaveBeenCalledTimes(1);
+    expect(getFilteredCats).toHaveBeenCalledWith({});
   });
 
   it("handles loading state transition correctly", async () => {
-    vi.mocked(getAllCats).mockResolvedValue(mockCats);
+    vi.mocked(getFilteredCats).mockResolvedValue(mockCats);
 
     renderWithRouter(<Cats />);
 
@@ -157,7 +158,7 @@ describe("Cats", () => {
   });
 
   it("error state has correct styling classes", async () => {
-    vi.mocked(getAllCats).mockRejectedValue(new Error("API Error"));
+    vi.mocked(getFilteredCats).mockRejectedValue(new Error("API Error"));
 
     renderWithRouter(<Cats />);
 
@@ -171,7 +172,7 @@ describe("Cats", () => {
   });
 
   it("empty state has correct styling classes", async () => {
-    vi.mocked(getAllCats).mockResolvedValue([]);
+    vi.mocked(getFilteredCats).mockResolvedValue([]);
 
     renderWithRouter(<Cats />);
 
@@ -185,7 +186,7 @@ describe("Cats", () => {
   });
 
   it("heading has correct text alignment class", () => {
-    vi.mocked(getAllCats).mockImplementation(() => new Promise(() => {}));
+    vi.mocked(getFilteredCats).mockImplementation(() => new Promise(() => {}));
 
     renderWithRouter(<Cats />);
 
@@ -194,13 +195,42 @@ describe("Cats", () => {
   });
 
   it("renders correct number of cat cards", async () => {
-    vi.mocked(getAllCats).mockResolvedValue(mockCats);
+    vi.mocked(getFilteredCats).mockResolvedValue(mockCats);
 
     renderWithRouter(<Cats />);
 
     await waitFor(() => {
       expect(screen.getByText("Whiskers")).toBeInTheDocument();
       expect(screen.getByText("Luna")).toBeInTheDocument();
+    });
+  });
+
+  it("renders filter buttons", () => {
+    vi.mocked(getFilteredCats).mockImplementation(() => new Promise(() => {}));
+
+    renderWithRouter(<Cats />);
+
+    expect(screen.getByText("Gender:")).toBeInTheDocument();
+    expect(screen.getByText("Status:")).toBeInTheDocument();
+    expect(screen.getAllByText("All")).toHaveLength(2);
+    expect(screen.getByText("Male")).toBeInTheDocument();
+    expect(screen.getByText("Female")).toBeInTheDocument();
+    expect(screen.getByText("Available")).toBeInTheDocument();
+    expect(screen.getByText("Reserved")).toBeInTheDocument();
+    expect(screen.getByText("Adopted")).toBeInTheDocument();
+  });
+
+  it("calls getFilteredCats with updated filters when filter buttons are clicked", async () => {
+    vi.mocked(getFilteredCats).mockResolvedValue(mockCats);
+
+    renderWithRouter(<Cats />);
+
+    // Click male filter
+    const maleButton = screen.getByText("Male");
+    maleButton.click();
+
+    await waitFor(() => {
+      expect(getFilteredCats).toHaveBeenCalledWith({ gender: "male" });
     });
   });
 });

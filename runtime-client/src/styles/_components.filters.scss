@@ -80,7 +80,7 @@
   }
 }
 
-.c-cat-filters__button--all {
+.c-cat-filters__button--status-all {
   &.c-cat-filters__button--active {
     border-color: $gray-500;
     background: $gray-100;
@@ -88,7 +88,7 @@
   }
 }
 
-.c-cat-filters__button--available {
+.c-cat-filters__button--status-available {
   &:hover:not(.c-cat-filters__button--active) {
     border-color: $green;
     background: $light-green;
@@ -101,7 +101,7 @@
   }
 }
 
-.c-cat-filters__button--reserved {
+.c-cat-filters__button--status-reserved {
   &:hover:not(.c-cat-filters__button--active) {
     border-color: $yellow;
     background: $light-yellow;
@@ -114,7 +114,7 @@
   }
 }
 
-.c-cat-filters__button--adopted {
+.c-cat-filters__button--status-adopted {
   &:hover:not(.c-cat-filters__button--active) {
     border-color: $orange;
     background: $light-orange;

@@ -60,7 +60,7 @@ const CatFilters: React.FC<CatFiltersProps> = ({ filters, onFilterChange }) => {
             {statusOptions.map((option) => (
               <button
                 key={option.value}
-                className={`c-cat-filters__button c-cat-filters__button--${
+                className={`c-cat-filters__button c-cat-filters__button--status-${
                   option.value || "all"
                 } ${
                   filters.adoption_status === option.value ||
