@@ -10,30 +10,12 @@ This project demonstrates a mini-runtime system consisting of three main compone
 - **DataApi** (Elixir/Phoenix) - Dynamic API backend that reads configurations from Redis and serves endpoints
 - **Runtime Client** (React/TypeScript) - Example frontend application (cat shelter) that consumes the API
 
-## 🎬 Demo
+## Demo
 
-[📹 Watch Demo Video](https://youtu.be/nPAKCew5I7k)
+[📹 Watch Demo Video]()
+[![Demo Video](https://img.youtube.com/vi/nPAKCew5I7k/maxresdefault.jpg)](https://youtu.be/nPAKCew5I7k)
 
-## Architecture
-
-### Configuration Compiler (DataCompiler)
-
-- **JSON Processing**: Compiles JSON configurations into standardized format
-- **Redis Storage**: Stores compiled configurations in Redis for API consumption
-- **Validation**: Ensures configuration integrity and type safety
-
-### Dynamic API (DataApi)
-
-- **Configuration-Driven**: Reads compiled configurations from Redis to serve endpoints
-- **Database Agnostic**: Works with any PostgreSQL database schema
-- **Multi-tenant**: Supports multiple applications with different configurations
-
-### Cat Shelter Frontend (Runtime Client - example app)
-
-- **React 19** with TypeScript
-- **Cat Shelter Demo**: Shows how to consume the dynamic API
-- **Modern CSS** with SCSS and BEM methodology
-- **Responsive Design**: Mobile and desktop friendly
+_Click to watch the full demo showing filtering, cat pages, galleries, and responsive design_
 
 ## Quick Start
 
@@ -48,7 +30,7 @@ This project demonstrates a mini-runtime system consisting of three main compone
 # Build all services
 make build
 
-# Start all services
+# Start all services (wait intil it's done)
 make up
 
 # Check status
@@ -74,6 +56,27 @@ make status            # Show running containers
 make seed              # Re-seed database manually
 make compile-config    # Re-compile configuration manually
 ```
+
+## Architecture
+
+### Configuration Compiler (DataCompiler)
+
+- **JSON Processing**: Compiles JSON configurations into standardized format
+- **Redis Storage**: Stores compiled configurations in Redis for API consumption
+- **Validation**: Ensures configuration integrity and type safety
+
+### Dynamic API (DataApi)
+
+- **Configuration-Driven**: Reads compiled configurations from Redis to serve endpoints
+- **Database Agnostic**: Works with any PostgreSQL database schema
+- **Multi-tenant**: Supports multiple applications with different configurations
+
+### Cat Shelter Frontend (Runtime Client - example app)
+
+- **React 19** with TypeScript
+- **Cat Shelter Demo**: Shows how to consume the dynamic API
+- **Modern CSS** with SCSS and BEM methodology
+- **Responsive Design**: Mobile and desktop friendly
 
 ## Project Structure
 
