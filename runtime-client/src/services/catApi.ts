@@ -15,14 +15,9 @@ export interface Cat {
   updated_at: string;
 }
 
-export async function getAllCats(): Promise<Cat[]> {
-  const response = await fetch(`${API_BASE_URL}/cats`);
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json();
+export interface Filters {
+  gender?: "male" | "female";
+  adoption_status?: "available" | "reserved" | "adopted";
 }
 
 export async function getCatById(id: number): Promise<Cat> {
@@ -42,6 +37,28 @@ export async function getCatById(id: number): Promise<Cat> {
   }
 
   return data;
+}
+
+export async function getFilteredCats(
+  filters: Filters = {}
+): Promise<Cat[]> {
+  const queryParams = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== "" && value !== null) {
+      queryParams.append(key, String(value));
+    }
+  });
+
+  const response = await fetch(
+    `${API_BASE_URL}/cats?${queryParams.toString()}`
+  );
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+  return response.json();
 }
 
 export function parsePhotos(photosJson: string): string[] {

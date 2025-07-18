@@ -1,18 +1,21 @@
 import { useState, useEffect } from "react";
-import type { Cat } from "../services/catApi";
-import { getAllCats } from "../services/catApi";
+import type { Cat, Filters } from "../services/catApi";
+import { getFilteredCats } from "../services/catApi";
 import Spinner from "./common/Spinner.tsx";
 import CatCard from "./CatCard.tsx";
+import CatFilters from "./CatFilters.tsx";
 
 const Cats: React.FC = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<Filters>({});
 
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const fetchedCats = await getAllCats();
+        setLoading(true);
+        const fetchedCats = await getFilteredCats(filters);
         setCats(fetchedCats);
         setError(null);
       } catch (error) {
@@ -24,11 +27,13 @@ const Cats: React.FC = () => {
     };
 
     fetchCats();
-  }, []);
+  }, [filters]);
 
   return (
     <div className="c-cat-page">
       <h1 className="u-text-center">{loading ? "Loading Cats" : "Our Cats"}</h1>
+
+      <CatFilters filters={filters} onFilterChange={setFilters} />
 
       {loading && <Spinner loading={loading} />}
 
