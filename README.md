@@ -10,6 +10,10 @@ This project demonstrates a mini-runtime system consisting of three main compone
 - **DataApi** (Elixir/Phoenix) - Dynamic API backend that reads configurations from Redis and serves endpoints
 - **Runtime Client** (React/TypeScript) - Example frontend application (cat shelter) that consumes the API
 
+## 🎬 Demo
+
+[📹 Watch Demo Video](https://youtu.be/nPAKCew5I7k)
+
 ## Architecture
 
 ### Configuration Compiler (DataCompiler)
